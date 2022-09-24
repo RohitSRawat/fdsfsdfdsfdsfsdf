@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: '${window.location.origin}',
+  baseURL: 'https://gabarsinghrawat.herokuapp.com',
   withCredentials: true,
  
   
