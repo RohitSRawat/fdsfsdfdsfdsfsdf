@@ -45,7 +45,7 @@ try {
 e.preventDefault()
 try {
     var dataf = new FormData(e.target);
-    fetch('http://localhost:8080/fetchs',{
+    fetch(`${window.location.origin}/fetchs`,{
       body: dataf,
       method: 'POST'
     }).then((res) => res.blob()).then((blob) => {
