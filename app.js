@@ -6,6 +6,7 @@ const multer = require("multer");
 const pdfKit = require('pdfkit');
 const path = require('path')
 const port = process.env.PORT||8080
+const sharp = require('sharp')
 
 const memory = multer.memoryStorage();
 const fs = require('fs');
@@ -72,12 +73,20 @@ app.get('*',(req,res) => {
         req.sendFile(path.resolve(__dirname,"build",'index.html'))
     })
     
-app.post("/fetchimage", uploadmemory.single("Image"), (req, res) => {
+app.post("/fetchimage", uploadmemory.single("Image"), async (req, res) => {
   try {
 
-    console.log(req.file);
-
-    const base64data = Buffer.from(req.file.buffer).toString("base64");
+       const a = await sharp(req.file.buffer).resize({
+        height:300,
+        width: 300
+    })
+    .jpeg({ quality: 100 })
+    .toBuffer()
+     console.log(a)
+console.log(req.file.buffer)
+  // .pipe(roundedCornerResizer)
+  // .pipe(writableStream)
+    const base64data = Buffer.from(a).toString("base64");
     res.status(201).send("data:image/jpeg;base64," + base64data);
 
   } catch (error) {
@@ -93,10 +102,30 @@ app.post("/fetchs", uploadmemory.fields([{
   name: 'car', maxCount: 1
 },{
   name: 'license', maxCount: 1
-}]),(req, res) => {
+}]),async (req, res) => {
   try {
 
-   
+    const driver = await sharp(req.files.driver[0].buffer).resize({
+      height:300,
+      width: 300
+  })
+  .jpeg({ quality: 100 })
+  .toBuffer()
+  console.log(driver)
+
+  const model = await sharp(req.files.car[0].buffer).resize({
+    height:300,
+    width: 300
+})
+.jpeg({ quality: 100 })
+.toBuffer()
+
+const license = await sharp(req.files.license[0].buffer).resize({
+  height:300,
+  width: 300
+})
+.jpeg({ quality: 100 })
+.toBuffer()
 
 let fontNormal = 'Helvetica';
 let fontBold = 'Helvetica-Bold';
@@ -128,16 +157,16 @@ console.log(driverdata)
 
       pdfDoc.font('Helvetica').fontSize(16).text('DRIVER PHOTO', 40, 40,{ align: "center", width: 300 });
 
-      pdfDoc.image(req.files.driver[0].buffer, 40, 60, {width: 300, height: 300 ,fit: [300, 300], align: 'center', valign: 'center'}
+      pdfDoc.image(driver, 40, 60, {width: 300, height: 300 ,fit: [300, 300], align: 'center', valign: 'center'}
         );
-      pdfDoc.font('Helvetica').fontSize(16).text('COMPANY PHOTO', 380, 40,{ align: "center", width: 300 });
+      pdfDoc.font('Helvetica').fontSize(16).text('Goods and Pick Up Boy Photo', 380, 40,{ align: "center", width: 300 });
 
-      pdfDoc.image(req.files.car[0].buffer
+      pdfDoc.image(model
         , 380, 60, {width: 300, height: 300,fit: [300, 300], align: 'center', valign: 'center'}
         );
       pdfDoc.font('Helvetica').fontSize(16).text('LICENSE PHOTO', 720, 40,{ align: "center", width: 300 });
 
-      pdfDoc.image(req.files.license[0].buffer
+      pdfDoc.image(license
         , 720, 60, {width: 300, height: 300,fit: [300, 300], align: 'center', valign: 'center'});
       pdfDoc.font('Helvetica').fontSize(16).text('DATE:', 40, 400,{ align: "right", width: 440 });
       pdfDoc.font('Helvetica').fontSize(16).text('NAME:', 40, 430,{ align: "right", width: 440 });
