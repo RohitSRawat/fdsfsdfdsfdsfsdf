@@ -68,7 +68,7 @@ this.printDocument()
        <Container>
           <Row >
             <Col>
-              <h1 style={  {
+              <h1  className="headliss" style={  {
   textAlign: "center",
   color: "rebeccapurple",
   fontSize: "40px"
@@ -76,7 +76,7 @@ this.printDocument()
             </Col>
           </Row>
           <Row className="rowlist">
-            <Col className="imagelist"  md={8}>
+            <Col className="imagelist"  md={12}>
               <div className="driverinfo">
                 <p>Driver Photo</p>
                 <img ref={this.driverref} src={this.imgsrcbase64()} />
@@ -85,7 +85,7 @@ this.printDocument()
                 }}  name="driver" type="file" />
               </div>
               <div className="driverinfo">
-                <p>Vehicle Photo</p>
+                <p>Goods & Pickup Boy</p>
                 <img  ref={this.vehicleref}  src={this.imgsrcbase64()} />
                 <input  onChange={(e) => {
                     this.change(e,this.vehicleref.current)
